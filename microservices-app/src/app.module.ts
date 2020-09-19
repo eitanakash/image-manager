@@ -9,7 +9,8 @@ import { UsageReportModule } from './usage-report/usage-report.module';
 @Module({
   imports: [
     ImageManagerModule,
-    MongooseModule.forRoot('mongodb://localhost/image-db'),
+    // MongooseModule.forRoot('mongodb://localhost/image-db'),
+    MongooseModule.forRoot(process.env.DB_URL),
     FilesModule,
     UsageReportModule,
   ],
