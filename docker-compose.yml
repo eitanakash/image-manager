@@ -1,0 +1,54 @@
+version: "3"
+services:
+  # microservices_app:
+  #   depends_on:
+  #     - db
+  #   restart: always
+  #   # build: ./microservices-app
+  #   image: micro-app
+  #   # ports:
+  #   # - "8080:3000"
+  #   environment:
+  #     - DB_URL=mongodb://db_mongo
+  #     - ENV_VAR=var-example
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  # microservice_client:
+  #   depends_on:
+  #     - db
+  #   image: myapp_prod
+  #   restart: always
+  #   # build: ./microservice-client
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - DB_URL=mongodb://db_mongo
+  #     - ENV_VAR=var-example
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+
+  db:
+    image: mongo
+    container_name: db_mongo
+    volumes:
+      - mongodata:/data/db #where is is saved? see in container
+    ports:
+      - "27017:27017"
+  rabbitmq:
+    image: "rabbitmq:3.6.6-management"
+    container_name: rabbit_mq
+
+    ports:
+      - "4369:4369"
+      - "5672:5672"
+      - "15672:15672"
+      - "25672:25672"
+      - "35197:35197"
+    volumes:
+      - ./data:/var/lib/rabbitmq
+      - ./data/logs:/var/log/rabbitmq
+
+volumes:
+  mongodata: #where is is saved? see in container
