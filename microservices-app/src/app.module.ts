@@ -9,8 +9,8 @@ import { env } from '../env';
 @Module({
   imports: [
     ImageManagerModule,
-    MongooseModule.forRoot(`${env.MONGODB_URI}`),
-    // MongooseModule.forRoot(process.env.DB_URL),
+    // MongooseModule.forRoot(`${env.MONGODB_URI}`),
+    MongooseModule.forRoot(process.env.DB_URL),
     UsageReportModule,
   ],
   controllers: [AppController],

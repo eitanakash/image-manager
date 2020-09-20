@@ -1,4 +1,10 @@
-import {  Controller} from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 
 @Controller()
-export class AppController {}
+export class AppController {
+  @Get()
+  hi() {
+    console.log('message from the other world in console');
+    return 'message from the other world';
+  }
+}
