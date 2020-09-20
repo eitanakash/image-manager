@@ -11,10 +11,7 @@ export class UsageReportController {
 
   ) { }
 
-
-
   private logger = new Logger();
-
 
   @EventPattern('generate-report')
   async getReport(date) {

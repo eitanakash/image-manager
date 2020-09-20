@@ -7,7 +7,9 @@ services:
     container_name: app-micro
     restart: always
     environment:
-      - DB_URL=mongodb://mongo:27017/db_mongo
+      - DB_URL=mongodb://mongo:27017/image-db
+      - RABBITMQ_HOST=rabbitmq
+
     links:
       - "mongo"
       # - "rabbitmq"
@@ -16,54 +18,35 @@ services:
       - /usr/src/app/node_modules
   microservice_client:
     # depends_on:
-      # - "rabbitmq"
+    # - "rabbitmq"
     image: 30300101/client-image-manager
     container_name: client-micro
     restart: always
+    environment:
+      - RABBITMQ_HOST=rabbitmq
     ports:
       - "3000:3000"
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     # links:
-      # - "rabbitmq"
+    # - "rabbitmq"
   mongo:
     image: mongo
     container_name: mongo
+    restart: always
     volumes:
       - mongodata:/data/db
     ports:
       - "27017:27017"
-  # rabbitmq:
-  #   image: "rabbitmq:3.6.6-management"
-  #   container_name: rabbit_mq
 
-  #   ports:
-  #     - "4369:4369"
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #     - "25672:25672"
-      # - "35197:35197"
-    # volumes:
-    #   - ./conf/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
-    #   - ./data:/var/lib/rabbitmq
-    #   - ./data/logs:/var/log/rabbitmq
-  # rabbitmq:
-  #   image: "rabbitmq:3-management"
-  #   container_name: rabbit_mq
-
-  #   ports:
-  #     - "15672:15672"
-  #     - "5672:5672"
-  #   # volumes:
-  #     # - ./rabbitmq:/etc/rabbitmq
-  #     # - ./data:/var/lib/rabbitmq
-  #     # - ./data/logs:/var/log/rabbitmq
-  #     # - ./logs:/var/log/rabbitmq
-  #   # volumes:
-  #   # - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
-  #   # - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
-  #   # - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "15672:15672"
+      - "5672:5672"
 
 volumes:
   mongodata:
