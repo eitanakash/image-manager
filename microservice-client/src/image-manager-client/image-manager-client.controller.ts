@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Logger, Param, Put, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Delete, Get, Inject, Logger, Param, Put, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,12 +7,11 @@ import { Observable } from 'rxjs';
 @Controller('image-api')
 export class ImageManagerClientController {
   constructor(@Inject('IMAGE_SERVICE') private readonly client: ClientProxy) { }
-
   private logger = new Logger();
 
   @Put('upload-file')
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile1(@UploadedFile() file, @Body() query, @Req() req) {
+  uploadFile1(@UploadedFile() file, @Req() req) {
     try {
       this.logger.log({ message: `Client-controller: upload image name: ${file.originalname}` });
       // TODO: mongodm limit up to 16 mb change to object store like miniIo Or use package like gridfs
@@ -24,7 +23,6 @@ export class ImageManagerClientController {
         throw { message: 'please use username' };
       }
       const fileId = uuidv4();
-
       const queryObj = {
         queryType: 'upload',
         username,
@@ -36,17 +34,13 @@ export class ImageManagerClientController {
     } catch (err) {
       this.logger.warn({ error: `Client-controller: couldn't view image name: ${file.originalname}` });
       return { error: err.message };
-
     }
-
   }
-
 
   @Get('/view/')
   async viewErr() {
     return { error: 'please send file id param' };
   }
-
 
   @Get('view/:fileId')
   async viewImage(@Param('fileId') fileId, @Req() req, @Res() res) {
@@ -115,7 +109,5 @@ export class ImageManagerClientController {
       this.logger.warn({ error: `Client-controller: couldn't delete image id: ${fileId}` });
       res.status(404).send({ error: err.message });
     }
-
   }
-
 }
