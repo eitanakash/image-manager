@@ -13,7 +13,8 @@ import { env } from '../env';
       {
         name: 'IMAGE_SERVICE', transport: Transport.RMQ,
         options: {
-          urls: [`amqp://guest:guest@${env.RABBITMQ_HOST}:${env.RABBITMQ_PORT}/${env.RABBITMQ_VHOST}`],
+          urls: [`amqp://guest:guest@${process.env.RABBITMQ_HOST}:${env.RABBITMQ_PORT}/${env.RABBITMQ_VHOST}`],
+          // urls: [`amqp://guest:guest@${env.RABBITMQ_HOST}:${env.RABBITMQ_PORT}/${env.RABBITMQ_VHOST}`],
           queue: `${env.RABBITMQ_QUEUE}`,
           queueOptions: {
             durable: false,
