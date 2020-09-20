@@ -11,7 +11,7 @@ export class ImageManagerClientController {
 
   @Put('upload-file')
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile1(@UploadedFile() file, @Req() req) {
+  uploadFile1(@UploadedFile() file, @Req() req): any {
     try {
       this.logger.log({ message: `Client-controller: upload image name: ${file.originalname}` });
       // TODO: mongodm limit up to 16 mb change to object store like miniIo Or use package like gridfs
@@ -38,12 +38,13 @@ export class ImageManagerClientController {
   }
 
   @Get('/view/')
-  async viewErr() {
+  viewErr() {
     return { error: 'please send file id param' };
   }
 
+  // TODO: return encoded result
   @Get('view/:fileId')
-  async viewImage(@Param('fileId') fileId, @Req() req, @Res() res) {
+  async viewImage(@Param('fileId') fileId, @Req() req, @Res() res): Promise<any> {
     try {
       this.logger.log({ message: `Client-controller: view image name: ${fileId}` });
       const username = req.headers['x-username'];
@@ -56,30 +57,26 @@ export class ImageManagerClientController {
         fileId,
       };
       const result: Observable<any> = await this.client.send('view-image', queryObj);
-      // TODO: fix return
       result.subscribe((obj => {
         if (obj.error) {
-          // res.status(404).send({ error: obj.error });
+          res.status(404).send({ error: obj.error });
         }
         res.send(obj);
         res.end();
-
       }));
-
     } catch (err) {
       this.logger.warn({ error: `Client-controller: couldn't view image id: ${fileId}` });
       return { error: err.message };
-
     }
   }
 
   @Delete('/delete/')
-  async deleteErr() {
+  deleteErr() {
     return { error: 'please send file id param' };
   }
 
   @Delete('/delete/:fileId')
-  async deleteImage(@Param('fileId') fileId, @Req() req, @Res() res) {
+  async deleteImage(@Param('fileId') fileId, @Req() req, @Res() res): Promise<any> {
     try {
       this.logger.log({ message: `Client-controller: view image delete: ${fileId}` });
 
@@ -92,7 +89,6 @@ export class ImageManagerClientController {
         username,
         fileId,
       };
-      // this.client.emit<any>('delete-image', queryObj);
       const result: Observable<any> = await this.client.send('delete-image', queryObj);
 
       result.subscribe((obj => {
@@ -101,7 +97,7 @@ export class ImageManagerClientController {
           res.end();
           return;
         }
-        res.send('obj');
+        res.send(obj);
         res.end();
 
       }));

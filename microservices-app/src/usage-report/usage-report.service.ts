@@ -93,6 +93,7 @@ export class UsageReportService {
             const newDoc = new this.deletedImagesSchema(Doc);
             result = await newDoc.save();
           }
+          // TODO: remove fileId from all list if needed
           break;
       }
 
