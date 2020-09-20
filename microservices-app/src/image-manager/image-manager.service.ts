@@ -4,8 +4,8 @@ import { Image } from '../schemas/image.schema';
 import { Model } from 'mongoose';
 import { Buffer } from 'buffer';
 import { UsageReportService } from 'src/usage-report/usage-report.service';
-// import { CreateCatDto } from './dto/create-cat.dto';
 
+// TODO: validation all methods
 @Injectable()
 export class ImageManagerService {
   constructor(
@@ -29,18 +29,22 @@ export class ImageManagerService {
         contentType: file.mimetype,
         image: Buffer.from(encodeImage, 'base64'),
       };
-      const file1 = {
+      const imageDoc = {
 
         title: file.mimetype,
-        description: file.encoding,
+        uploader: queryObj.username,
+        encoding: file.encoding,
         size: file.size,
         fileId: queryObj.fileId,
-        data: finalImg, //Buffer.from(file.buffer.data),
+        data: finalImg,
       };
 
-      const newImage = new this.imageModel(file1);
+      const newImage = new this.imageModel(imageDoc);
       const result = await newImage.save();
-      return result.id as string;
+      if (result) {
+        this.usageReportService.editUploderCollection(queryObj.username, queryObj.fileId)
+      }
+      return;
     } catch (err) {
       this.logger.warn({ error: `App-Service: couldn't view image id ${queryObj.fileId}` });
       return { error: err.message };
@@ -48,10 +52,14 @@ export class ImageManagerService {
 
   }
 
+  // TODO: edit to view result of binary
   async viewImage(queryObj): Promise<any> {
     try {
       this.logger.log({ message: `App-Service: view image id ${queryObj.fileId}` });
       const result: any = await this.imageModel.findOne({ fileId: queryObj.fileId });
+      if (result) {
+        this.usageReportService.editViewedImagesCollection(queryObj.username, queryObj.fileId)
+      }
       console.log('result');
       console.log(result);
       return result.data;
@@ -66,6 +74,10 @@ export class ImageManagerService {
       this.logger.log({ message: `App-Service: deleting image id ${queryObj.fileId}` });
 
       const result: any = await this.imageModel.findOneAndDelete({ fileId: queryObj.fileId });
+
+      if (result) {
+        this.usageReportService.editDeletedImagesCollection(queryObj.username, queryObj.fileId)
+      }
 
       return { message: `Image id ${result.fileId} deleted` };
     } catch (err) {

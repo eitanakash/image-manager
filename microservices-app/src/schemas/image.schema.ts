@@ -8,6 +8,7 @@ const data = new mongoose.Schema({
 
 export const ImageSchema = new mongoose.Schema({
   title: { type: String, required: false },
+  uploader: { type: String, required: false },
   encoding: { type: String, required: false },
   size: { type: Number, required: false },
   fileId: { type: String, required: false, unique: true },
@@ -17,6 +18,7 @@ export const ImageSchema = new mongoose.Schema({
 export interface Image extends mongoose.Document {
   id?: string;
   title?: string;
+  uploader?: string;
   encoding?: string;
   size?: number;
   fileId?: string;

@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Logger, Param, Post, Put, Req, Res, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Logger, Param, Put, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { v4 as uuidv4 } from 'uuid';
 import { Observable } from 'rxjs';
 
@@ -15,13 +15,14 @@ export class ImageManagerClientController {
   uploadFile1(@UploadedFile() file, @Body() query, @Req() req) {
     try {
       this.logger.log({ message: `Client-controller: upload image name: ${file.originalname}` });
-
+      // TODO: mongodm limit up to 16 mb change to object store like miniIo Or use package like gridfs
       if (file.size > 15800000) {
-        console.log(file.size);
-
-        return 'Big file need object storage or chunks, max size 16 mb';
+        throw { message: 'Max file size 16 mb' };
       }
       const username = req.headers['x-username'];
+      if (!username) {
+        throw { message: 'please use username' };
+      }
       const fileId = uuidv4();
 
       const queryObj = {
@@ -40,32 +41,36 @@ export class ImageManagerClientController {
 
   }
 
+
+  @Get('/view/')
+  async viewErr() {
+    return { error: 'please send file id param' };
+  }
+
+
   @Get('view/:fileId')
   async viewImage(@Param('fileId') fileId, @Req() req, @Res() res) {
     try {
       this.logger.log({ message: `Client-controller: view image name: ${fileId}` });
       const username = req.headers['x-username'];
+      if (!username) {
+        throw { message: 'please use username' };
+      }
       const queryObj = {
         queryType: 'view',
         username,
         fileId,
       };
-      // this.client.emit<any>('view-image', queryObj);
       const result: Observable<any> = await this.client.send('view-image', queryObj);
-      console.log('result client');
-      console.log(result);
       // TODO: fix return
-      // res.contentType('image/jpeg');
-
       result.subscribe((obj => {
-        console.log(obj);
         if (obj.error) {
           // res.status(404).send({ error: obj.error });
         }
         res.send(obj);
         res.end();
 
-      }))
+      }));
 
     } catch (err) {
       this.logger.warn({ error: `Client-controller: couldn't view image id: ${fileId}` });
@@ -73,31 +78,37 @@ export class ImageManagerClientController {
 
     }
   }
+
+  @Delete('/delete/')
+  async deleteErr() {
+    return { error: 'please send file id param' };
+  }
+
   @Delete('/delete/:fileId')
   async deleteImage(@Param('fileId') fileId, @Req() req, @Res() res) {
     try {
       this.logger.log({ message: `Client-controller: view image delete: ${fileId}` });
 
       const username = req.headers['x-username'];
+      if (!username) {
+        throw { message: 'please use username' };
+      }
       const queryObj = {
         queryType: 'delete',
         username,
         fileId,
       };
       // this.client.emit<any>('delete-image', queryObj);
-
       const result: Observable<any> = await this.client.send('delete-image', queryObj);
 
       result.subscribe((obj => {
-        console.log('obj');
-        console.log(obj);
         if (obj.error) {
           res.status(404).send({ error: obj.error });
           res.end();
           return;
         }
-      res.send('obj');
-      res.end();
+        res.send('obj');
+        res.end();
 
       }));
     } catch (err) {
