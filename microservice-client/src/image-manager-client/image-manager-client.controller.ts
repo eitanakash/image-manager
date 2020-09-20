@@ -59,10 +59,12 @@ export class ImageManagerClientController {
       const result: Observable<any> = await this.client.send('view-image', queryObj);
       result.subscribe((obj => {
         if (obj.error) {
-          res.status(404).send({ error: obj.error });
+          // res.status(404).send({ error: obj.error });
+          res.status(404).send({ message: 'Image not found', error: obj.error }).end();
+        } else {
+          res.send(obj);
+          res.end();
         }
-        res.send(obj);
-        res.end();
       }));
     } catch (err) {
       this.logger.warn({ error: `Client-controller: couldn't view image id: ${fileId}` });
@@ -93,12 +95,11 @@ export class ImageManagerClientController {
 
       result.subscribe((obj => {
         if (obj.error) {
-          res.status(404).send({ error: obj.error });
+          res.status(404).send({message: 'Image not found', error: obj.error }).end();
+        } else {
+          res.send(obj);
           res.end();
-          return;
         }
-        res.send(obj);
-        res.end();
 
       }));
     } catch (err) {

@@ -21,8 +21,6 @@ import { ImageManagerClientModule } from './image-manager-client/image-manager-c
         },
       },
     ]),
-    MongooseModule.forRoot('mongodb://localhost/yourDB'),
-    // MongooseModule.forRoot(process.env.DB_URL),
     UsageReportModule,
     ImageManagerClientModule,
   ],
