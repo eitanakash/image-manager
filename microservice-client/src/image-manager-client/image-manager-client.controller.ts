@@ -30,7 +30,7 @@ export class ImageManagerClientController {
         fileId,
       };
       this.client.emit('upload-image', queryObj);
-      return fileId;
+      return { message: `file name: ${file.originalname} uploaded by file id of ${fileId}` };
     } catch (err) {
       this.logger.warn({ error: `Client-controller: couldn't view image name: ${file.originalname}` });
       return { error: err.message };
@@ -95,7 +95,7 @@ export class ImageManagerClientController {
 
       result.subscribe((obj => {
         if (obj.error) {
-          res.status(404).send({message: 'Image not found', error: obj.error }).end();
+          res.status(404).send({ message: 'Image not found', error: obj.error }).end();
         } else {
           res.send(obj);
           res.end();

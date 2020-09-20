@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+URL="http://localhost:15672/cli/rabbitmqadmin"
+
+VHOST="<>"
+USER="<>"
+PWD="<>"
+
+QUEUE="<>"
+FAILED_QUEUE="<>"
+
+INPUT_EX="<>"
+FAILED_INPUT_EX="<>"
+
+set_user_and_vhost() {
+    rabbitmqctl add_vhost $VHOST
+    rabbitmqctl list_vhosts
+    rabbitmqctl add_user $USER $PWD
+    rabbitmqctl set_user_tags $USER administrator
+    rabbitmqctl list_users
+}
+
+set_permissions() {
+    rabbitmqctl set_permissions -p $VHOST $USER ".*" ".*" ".*"
+    rabbitmqctl list_permissions -p $VHOST
+}
+
+set_exchanges() {
+    rabbitmqadmin declare exchange --vhost=$VHOST --user=$USER --password=$PWD name=$INPUT_EX type=direct durable=true
+    rabbitmqadmin declare exchange --vhost=$VHOST --user=$USER --password=$PWD name=$FAILED_INPUT_EX type=direct durable=true
+    rabbitmqctl list_exchanges -p $VHOST
+}
+
+set_queues() {
+    rabbitmqadmin declare queue --vhost=$VHOST --user=$USER --password=$PWD name=$QUEUE durable=true
+    rabbitmqadmin declare queue --vhost=$VHOST --user=$USER --password=$PWD name=$FAILED_QUEUE durable=true
+    rabbitmqctl list_queues -p $VHOST
+}
+
+set_bindings() {
+    rabbitmqadmin declare binding --vhost=$VHOST --user=$USER --password=$PWD source=$INPUT_EX destination=$QUEUE
+    rabbitmqadmin declare binding --vhost=$VHOST --user=$USER --password=$PWD source=$FAILED_INPUT_EX destination=$FAILED_QUEUE
+    rabbitmqctl list_bindings -p $VHOST
+}
+
+
+type rabbitmqctl > /dev/null 2>&1 || { echo >&2 "rabbitmqctl is required but it is not installed. Aborting."; exit 1; }
+type rabbitmqadmis > /dev/null 2>&1 || { echo >&2 "rabbitmqadmin is required but it is not installed.
+Download from $URL, add .py extension and install into /usr/local/bin/rabbitmqadmin.
+Aborting."; exit 1; }
+
+set_user_and_vhost
+set_permissions
+set_exchanges
+set_queues
+set_bindings
+
+echo "Rabbitmq configured with success."

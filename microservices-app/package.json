@@ -5,6 +5,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "init": "npm install && npm run start",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -28,13 +29,11 @@
     "amqp-connection-manager": "^3.2.0",
     "amqplib": "^0.5.5",
     "class-transformer": "*",
-    "gridfs-stream": "^1.1.1",
-    "mongo-gridfs": "*",
     "mongoose": "^5.10.5",
-    "multer-gridfs-storage": "^4.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
-    "rxjs": "^6.5.3"
+    "rxjs": "^6.5.3",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.9.0",

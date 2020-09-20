@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "d6c20aae-5e66-415c-8021-bdb9faa28a1b",
+		"name": "image-manager-docker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "view img",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-username",
+						"value": "user 6",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/image-api/view/bc9ad1c3-db5b-4d82-bbe0-b9e35a06bfef",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"image-api",
+						"view",
+						"bc9ad1c3-db5b-4d82-bbe0-b9e35a06bfef"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "2151",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload file",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-username",
+						"type": "text",
+						"value": "userName55"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/eitan/Downloads/logo-small.svg"
+						},
+						{
+							"key": "",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/image-api/upload-file/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"image-api",
+						"upload-file",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete img",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-username",
+						"type": "text",
+						"value": "user 1"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/image-api/delete/bc9ad1c3-db5b-4d82-bbe0-b9e35a06bfef",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"image-api",
+						"delete",
+						"bc9ad1c3-db5b-4d82-bbe0-b9e35a06bfef"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "2151",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/usage-report",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"usage-report"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

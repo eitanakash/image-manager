@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Transport, ClientsModule } from '@nestjs/microservices';
-import { MongooseModule } from '@nestjs/mongoose';
 import { UsageReportModule } from './usage-report/usage-report.module';
 import { ImageManagerClientService } from './image-manager-client/image-manager-client.service';
 import { ImageManagerClientModule } from './image-manager-client/image-manager-client.module';
+import { env } from '../env';
 
 @Module({
   imports: [
@@ -13,8 +13,8 @@ import { ImageManagerClientModule } from './image-manager-client/image-manager-c
       {
         name: 'IMAGE_SERVICE', transport: Transport.RMQ,
         options: {
-          urls: ['amqp://guest:guest@localhost:5672/images'],
-          queue: 'image-messages',
+          urls: [`amqp://guest:guest@${env.RABBITMQ_HOST}:${env.RABBITMQ_PORT}/${env.RABBITMQ_VHOST}`],
+          queue: `${env.RABBITMQ_QUEUE}`,
           queueOptions: {
             durable: false,
           },
