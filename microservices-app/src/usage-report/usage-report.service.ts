@@ -16,18 +16,18 @@ export class UsageReportService {
   ) { }
 
   private logger = new Logger();
-  private uploadedImagesReport = []
-  private viewedImagesReport = []
-  private deletedImagesReport = []
   async getReport(date) {
     try {
       this.logger.log({ message: `App-report-service: generating report ${date}` });
       const totalImages = await this.totalImages()
+      const uploadedImages = await this.uploadedImages()
+      const viewedImages = await this.viewedImages()
+      const deletedImages = await this.deletedImages()
       const report = {
         totalImages,
-        viewedImages: this.viewedImagesReport,
-        deletedImages: this.deletedImagesReport,
-        uploadedImages: this.uploadedImagesReport,
+        uploadedImages,
+        viewedImages,
+        deletedImages,
       }
 
       return report;
@@ -61,7 +61,6 @@ export class UsageReportService {
             const newDoc = new this.uploadedImagesSchema(Doc);
             result = await newDoc.save();
           }
-          this.uploadedImagesReport = await this.uploadedImagesSchema.find()
           break;
 
         case 'view':
@@ -78,7 +77,6 @@ export class UsageReportService {
             const newDoc = new this.viewedImagesSchema(Doc);
             result = await newDoc.save();
           }
-          this.viewedImagesReport = await this.viewedImagesSchema.find();
           break;
 
         case 'delete':
@@ -95,7 +93,6 @@ export class UsageReportService {
             const newDoc = new this.deletedImagesSchema(Doc);
             result = await newDoc.save();
           }
-          this.deletedImagesReport = await this.deletedImagesSchema.find()
           break;
       }
 
@@ -118,4 +115,37 @@ export class UsageReportService {
 
   }
 
+  async uploadedImages(): Promise<any> {
+    try {
+      this.logger.log({ message: `App-report-service: get uploder list for Report` });
+      const result: any = await this.uploadedImagesSchema.find();
+      return result;
+    } catch (err) {
+      this.logger.warn({ error: `App-report-service: couldn't get viewed images list for Report` });
+      return { error: err.message };
+    }
+
+  }
+
+  async viewedImages(): Promise<any> {
+    try {
+      this.logger.log({ message: `App-report-service: get viewed images list for Report` });
+      const result: any = await this.viewedImagesSchema.find();
+      return result;
+    } catch (err) {
+      this.logger.warn({ error: `App-report-service: couldn't get uploder list for Report` });
+      return { error: err.message };
+    }
+  }
+
+  async deletedImages(): Promise<any> {
+    try {
+      this.logger.log({ message: `App-report-service: get deleted images list for Report` });
+      const result: any = await this.deletedImagesSchema.find();
+      return result;
+    } catch (err) {
+      this.logger.warn({ error: `App-report-service: couldn't get deleted images list for Report` });
+      return { error: err.message };
+    }
+  }
 }
