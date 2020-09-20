@@ -13,25 +13,21 @@ export class UsageReportService {
     @InjectModel('ViewedImages') private readonly viewedImagesSchema: Model<ViewedImages>,
     @InjectModel('DeletedImages') private readonly deletedImagesSchema: Model<DeletedImages>,
     @InjectModel('Image') private readonly imageModel: Model<Image>,
-
-    // private readonly imageManagerService: ImageManagerService,
-
   ) { }
 
   private logger = new Logger();
+  private uploadedImagesReport = []
+  private viewedImagesReport = []
+  private deletedImagesReport = []
   async getReport(date) {
     try {
       this.logger.log({ message: `App-report-service: generating report ${date}` });
       const totalImages = await this.totalImages()
-      const uploadedImages = await this.uploadedImages()
-      const viewedImages = await this.viewedImages()
-      const deletedImages = await this.deletedImages()
       const report = {
         totalImages,
-        uploadedImages,
-        viewedImages,
-        deletedImages,
-
+        viewedImages: this.viewedImagesReport,
+        deletedImages: this.deletedImagesReport,
+        uploadedImages: this.uploadedImagesReport,
       }
 
       return report;
@@ -42,120 +38,69 @@ export class UsageReportService {
     }
   }
 
-  async editReport(queryObj) {
+  async editCollections(username, fileId, queryType) {
+    let Doc;
+    let userData;
+    let result;
+
     try {
-      this.logger.log({ message: `App-report-service: editing report` });
-      const file1 = {
-        title: 'titel1111',
-      }
-      let result;
-      switch (queryObj.queryType) {
+      this.logger.log({ message: `App-report-service: editing ${queryType} collection` });
+      switch (queryType) {
         case 'upload':
+          userData = await this.uploadedImagesSchema.findOne({ username: username });
+          if (userData) {
+            const valuesList = userData.imagesList;
+            const newImagesList = [...valuesList, fileId];
+            result = await this.uploadedImagesSchema.findOneAndUpdate({ username: username }, { imagesList: newImagesList });
 
-          console.log('upload');
-          // result = await this.reportModel.updateOne()
+          } else {
+            Doc = {
+              username,
+              imagesList: [fileId],
+            };
+            const newDoc = new this.uploadedImagesSchema(Doc);
+            result = await newDoc.save();
+          }
+          this.uploadedImagesReport = await this.uploadedImagesSchema.find()
           break;
+
         case 'view':
-          console.log('view');
-          // result = await this.reportModel.findOneAndUpdate({ views: queryObj.username }, { $inc: { views: 1 } })
+          userData = await this.viewedImagesSchema.findOne({ username: username });
+          if (userData) {
+            const valuesList = userData.imagesList;
+            const newImagesList = [...valuesList, fileId];
+            result = await this.viewedImagesSchema.findOneAndUpdate({ username: username }, { imagesList: newImagesList });
+          } else {
+            Doc = {
+              username,
+              imagesList: [fileId],
+            };
+            const newDoc = new this.viewedImagesSchema(Doc);
+            result = await newDoc.save();
+          }
+          this.viewedImagesReport = await this.viewedImagesSchema.find();
           break;
+
         case 'delete':
-          console.log('delete');
-
+          userData = await this.deletedImagesSchema.findOne({ username: username });
+          if (userData) {
+            const valuesList = userData.imagesList;
+            const newImagesList = [...valuesList, fileId];
+            result = await this.deletedImagesSchema.findOneAndUpdate({ username: username }, { imagesList: newImagesList });
+          } else {
+            Doc = {
+              username,
+              imagesList: [fileId],
+            };
+            const newDoc = new this.deletedImagesSchema(Doc);
+            result = await newDoc.save();
+          }
+          this.deletedImagesReport = await this.deletedImagesSchema.find()
           break;
-
-        default:
-          break;
       }
-      // const newImage = new this.reportModel(file1);
-      // const result = await newImage.save();
-      return result;
 
     } catch (err) {
-      this.logger.warn({ error: `App-report-service: couldn't edit report` });
-      return { error: err.message };
-    }
-  }
-
-// TODO: delete from list if image deleted?
-  async editUploderCollection(username, fileId) {
-    try {
-      this.logger.log({ message: `App-report-service: editing uploder list of username: ${username}` });
-      let Doc;
-      let result;
-
-      const userData: any = await this.uploadedImagesSchema.findOne({ username: username });
-      if (userData) {
-        const valuesList = userData.imagesList;
-        const newImagesList = [...valuesList, fileId];
-        result = await this.uploadedImagesSchema.findOneAndUpdate({ username: username }, { imagesList: newImagesList });
-      } else {
-        Doc = {
-          username,
-          imagesList: [fileId],
-        };
-        const newDoc = new this.uploadedImagesSchema(Doc);
-        result = await newDoc.save();
-      }
-      return result
-
-    } catch (err) {
-      this.logger.warn({ error: `App-report-service: couldn't edit uploder list of username: ${username }`});
-      return { error: err.message };
-    }
-  }
-
-// TODO: edit list of string to list of views obj {fileID: number}
-  async editViewedImagesCollection(username, fileId) {
-    try {
-      this.logger.log({ message: `App-report-service: editing viewed images list of username: ${username}` });
-      let Doc;
-      let result;
-
-      const userData: any = await this.viewedImagesSchema.findOne({ username: username });
-      if (userData) {
-        const valuesList = userData.imagesList;
-        const newImagesList = [...valuesList, fileId];
-        result = await this.viewedImagesSchema.findOneAndUpdate({ username: username }, { imagesList: newImagesList });
-      } else {
-        Doc = {
-          username,
-          imagesList: [fileId],
-        };
-        const newDoc = new this.viewedImagesSchema(Doc);
-        result = await newDoc.save();
-      }
-      return result
-
-    } catch (err) {
-      this.logger.warn({ error: `App-report-service: couldn't edit viewed images list of username: ${username }`});
-      return { error: err.message };
-    }
-  }
-
-  async editDeletedImagesCollection(username, fileId) {
-    try {
-      this.logger.log({ message: `App-report-service: editing deleted images list of username: ${username}` });
-      let Doc;
-      let result;
-
-      const userData: any = await this.deletedImagesSchema.findOne({ username: username });
-      if (userData) {
-        const valuesList = userData.imagesList;
-        const newImagesList = [...valuesList, fileId];
-        result = await this.deletedImagesSchema.findOneAndUpdate({ username: username }, { imagesList: newImagesList });
-      } else {
-        Doc = {
-          username,
-          imagesList: [fileId],
-        };
-        const newDoc = new this.deletedImagesSchema(Doc);
-        result = await newDoc.save();
-      }
-      return result
-
-    } catch (err) {
-      this.logger.warn({ error: `App-report-service: couldn't edit deleted images list of username: ${username }`});
+      this.logger.warn({ error: `App-report-service: couldn't edit ${queryType} collection` });
       return { error: err.message };
     }
   }
@@ -172,36 +117,5 @@ export class UsageReportService {
     }
 
   }
-  async uploadedImages(): Promise<any> {
-    try {
-      this.logger.log({ message: `App-report-service: get uploder list for Report` });
-      const result: any = await this.uploadedImagesSchema.find();
-      return result;
-    } catch (err) {
-      this.logger.warn({ error: `App-report-service: couldn't get viewed images list for Report` });
-      return { error: err.message };
-    }
 
-  }
-  async viewedImages(): Promise<any> {
-    try {
-      this.logger.log({ message: `App-report-service: get viewed images list for Report` });
-      const result: any = await this.viewedImagesSchema.find();
-      return result;
-    } catch (err) {
-      this.logger.warn({ error: `App-report-service: couldn't get uploder list for Report` });
-      return { error: err.message };
-    }
-  }
-
-  async deletedImages(): Promise<any> {
-    try {
-      this.logger.log({ message: `App-report-service: get deleted images list for Report` });
-      const result: any = await this.deletedImagesSchema.find();
-      return result;
-    } catch (err) {
-      this.logger.warn({ error: `App-report-service: couldn't get deleted images list for Report` });
-      return { error: err.message };
-    }
-  }
 }

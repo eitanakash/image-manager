@@ -4,6 +4,7 @@ import { Image } from '../schemas/image.schema';
 import { Model } from 'mongoose';
 import { Buffer } from 'buffer';
 import { UsageReportService } from 'src/usage-report/usage-report.service';
+import { QueryObjDto } from './dto/query-obj-dto';
 
 // TODO: validation all methods
 @Injectable()
@@ -42,7 +43,9 @@ export class ImageManagerService {
       const newImage = new this.imageModel(imageDoc);
       const result = await newImage.save();
       if (result) {
-        this.usageReportService.editUploderCollection(queryObj.username, queryObj.fileId)
+        // this.usageReportService.editUploderCollection(queryObj.username, queryObj.fileId)
+        this.usageReportService.editCollections(queryObj.username, queryObj.fileId, queryObj.queryType)
+
       }
       return;
     } catch (err) {
@@ -58,7 +61,9 @@ export class ImageManagerService {
       this.logger.log({ message: `App-Service: view image id ${queryObj.fileId}` });
       const result: any = await this.imageModel.findOne({ fileId: queryObj.fileId });
       if (result) {
-        this.usageReportService.editViewedImagesCollection(queryObj.username, queryObj.fileId)
+        // this.usageReportService.editViewedImagesCollection(queryObj.username, queryObj.fileId)
+        this.usageReportService.editCollections(queryObj.username, queryObj.fileId, queryObj.queryType)
+
       }
       console.log('result');
       console.log(result);
@@ -69,14 +74,15 @@ export class ImageManagerService {
     }
 
   }
-  async deleteImage(queryObj): Promise<any> {
+  async deleteImage(queryObj: QueryObjDto): Promise<any> {
     try {
       this.logger.log({ message: `App-Service: deleting image id ${queryObj.fileId}` });
 
       const result: any = await this.imageModel.findOneAndDelete({ fileId: queryObj.fileId });
 
       if (result) {
-        this.usageReportService.editDeletedImagesCollection(queryObj.username, queryObj.fileId)
+        // this.usageReportService.editDeletedImagesCollection(queryObj.username, queryObj.fileId)
+        this.usageReportService.editCollections(queryObj.username, queryObj.fileId, queryObj.queryType)
       }
 
       return { message: `Image id ${result.fileId} deleted` };
