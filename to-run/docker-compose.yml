@@ -1,0 +1,22 @@
+
+version: "3"
+services:
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    hostname: "rabbit1"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq"
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  mongodata:

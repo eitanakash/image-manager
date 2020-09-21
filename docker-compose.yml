@@ -12,13 +12,13 @@ services:
 
     links:
       - "mongo"
-      # - "rabbitmq"
+      - "rabbitmq"
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
   microservice_client:
-    # depends_on:
-    # - "rabbitmq"
+    depends_on:
+    - "rabbitmq"
     image: 30300101/client-image-manager
     container_name: client-micro
     restart: always
@@ -29,8 +29,8 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    # links:
-    # - "rabbitmq"
+    links:
+    - "rabbitmq"
   mongo:
     image: mongo
     container_name: mongo
@@ -42,6 +42,7 @@ services:
 
   rabbitmq:
     image: "rabbitmq:3-management"
+    hostname: "rabbitmq"
     container_name: rabbitmq
     restart: always
     ports:

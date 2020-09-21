@@ -27,7 +27,7 @@ An REST api microservice implementation using Nest JS and RabbitMQ
   - docker-compose up
   - run bash . start.sh
   - browse to http://localhost:15672
-    - add queue name: {image-messages}, 
+    - add virtual host name: {images},
   ### run without docker-comp
   - $ docker run --name rabbit_mq --rm -it --hostname my-rabbit -p 15672:15672 -p 5672:5672 -d rabbitmq:3-management
   - $ docker run --name mongo_db -d -p 27017:27017 -v ~/data:/data/db mongo
