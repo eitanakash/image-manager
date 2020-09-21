@@ -25,27 +25,22 @@ An REST api microservice implementation using Nest JS and RabbitMQ
 - fork and/or clone repository from https://github.com/eitanakash/image-manager
   ### using docker-compose 
   - docker-compose up
-  - run bash . start.sh
+  - run in cmd  ". start.sh"
   - browse to http://localhost:15672
     - add virtual host name: {images},
   ### run without docker-comp
-  - $ docker run --name rabbit_mq --rm -it --hostname my-rabbit -p 15672:15672 -p 5672:5672 -d rabbitmq:3-management
-  - $ docker run --name mongo_db -d -p 27017:27017 -v ~/data:/data/db mongo
-  - browse to http://localhost:15672
-    - add queue name: {image-messages}, 
-    - add virtual host name: {images},
-  - FOR enviroment changes, create/edit the .env file on the the services folder: for sample refer to .env.example
-  - $ cd {your location}/image-manager/microservice-client
-  - npm init
-  - $ cd {your location}/image-manager/microservice-client
-  - npm init
-
-- import postman file and Edit the host and port to localhost and port 3000 or edit env file
+Installation and Running semi-manual
+1. run in cmd ". manual-start-up.sh"
+2. run in cmd ". start-up.sh" (script to add queue)
+3. browse to http://localhost:15672 and log in to rubbitmq admin:    - password: guest    - username: guest
+4. Add a virtual host       (see https://medium.com/swlh/guide-to-nest-js-rabbitmq-microservices-e1e8655d283  )
+5. navigate to microservice-client and microservices-app and run "npm run init"6. use rest API See postman file to import API endpoints
 
 ## TODOs
 
 - Edit view image response
-- Add to rabit mq dockerfile queue and virtual host
+- fix bug of crushing when running docker compose
+- Add to rabitmq dockerfile/configuration queue and virtual host
 - add comments
 
 
