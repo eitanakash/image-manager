@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ImageManagerClientController } from './image-manager-client.controller';
 import { Transport, ClientsModule } from '@nestjs/microservices';
+import { env } from '../../env';
 
 @Module({
   imports: [
@@ -8,18 +9,14 @@ import { Transport, ClientsModule } from '@nestjs/microservices';
       {
         name: 'IMAGE_SERVICE', transport: Transport.RMQ,
         options: {
-          urls: ['amqp://guest:guest@localhost:5672/images'],
-          queue: 'image-messages',
+          urls: [`amqp://guest:guest@${env.RABBITMQ_HOST}:${env.RABBITMQ_PORT}/${env.RABBITMQ_VHOST}`],
+          queue: `${env.RABBITMQ_QUEUE}`,
           queueOptions: {
             durable: false,
           },
         },
       },
     ]),
-    // MongooseModule.forRoot('mongodb://localhost/yourDB'),
-    // ,
-    // UsageReportModule,
-
   ],
   controllers: [ImageManagerClientController]
 })
