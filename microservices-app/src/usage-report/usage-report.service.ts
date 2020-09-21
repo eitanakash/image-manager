@@ -16,6 +16,7 @@ export class UsageReportService {
   ) { }
 
   private logger = new Logger();
+  // TODO: remove from report redundant felids
   async getReport(date) {
     try {
       this.logger.log({ message: `App-report-service: generating report ${date}` });
