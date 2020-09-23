@@ -26,19 +26,11 @@ An REST api microservice implementation using Nest JS and RabbitMQ
   ### using docker-compose 
   - docker-compose up
   -  use api image-manager-docker.postman_collection.json
-  ### run without docker-comp
-Installation and Running semi-manual
-1. run in cmd ". manual-start-up.sh"
-2. run in cmd ". start-up.sh" (script to add queue)
-3. browse to http://localhost:15672 and log in to rubbitmq admin:    - password: guest    - username: guest
-4. Add a virtual host       (see https://medium.com/swlh/guide-to-nest-js-rabbitmq-microservices-e1e8655d283  )
-5. navigate to microservice-client and microservices-app and run "npm run init"6. use rest API See postman file to import API endpoints
+
 
 ## TODOs
 
-- Edit view image response
-- fix bug of crushing when running docker compose
-- Add to rabitmq dockerfile/configuration queue and virtual host
+- Edit view image response  
 - add comments
 
 
