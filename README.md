@@ -25,9 +25,7 @@ An REST api microservice implementation using Nest JS and RabbitMQ
 - fork and/or clone repository from https://github.com/eitanakash/image-manager
   ### using docker-compose 
   - docker-compose up
-  - run in cmd  ". start.sh"
-  - browse to http://localhost:15672
-    - add virtual host name: {images},
+  -  use api image-manager-docker.postman_collection.json
   ### run without docker-comp
 Installation and Running semi-manual
 1. run in cmd ". manual-start-up.sh"
