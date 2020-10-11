@@ -6,6 +6,7 @@ import { UsageReportModule } from './usage-report/usage-report.module';
 import { ImageManagerClientService } from './image-manager-client/image-manager-client.service';
 import { ImageManagerClientModule } from './image-manager-client/image-manager-client.module';
 import { env } from '../env';
+import { TwitterStreamModule } from './twitter-stream/twitter-stream.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { env } from '../env';
     ]),
     UsageReportModule,
     ImageManagerClientModule,
+    TwitterStreamModule,
   ],
   controllers: [AppController],
   providers: [AppService, ImageManagerClientService],

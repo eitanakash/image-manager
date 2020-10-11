@@ -29,11 +29,12 @@
     "amqp-connection-manager": "^3.2.0",
     "amqplib": "^0.5.5",
     "class-transformer": "*",
+    "dotenv": "^8.2.0",
     "mongoose": "^5.10.5",
+    "needle": "^2.5.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.3",
-    "uuid": "^8.3.0",
-    "dotenv": "^8.2.0"
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.9.0",
