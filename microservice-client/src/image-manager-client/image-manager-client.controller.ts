@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Inject, Logger, Param, Put, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Delete, Get, Inject, Logger, Param, Put, Query, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,7 +11,7 @@ export class ImageManagerClientController {
 
   @Put('upload-file')
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile1(@UploadedFile() file, @Req() req): any {
+  uploadFile(@UploadedFile() file, @Req() req): any {
     try {
       this.logger.log({ message: `Client-controller: upload image name: ${file.originalname}` });
       // TODO: mongodm limit up to 16 mb change to object store like miniIo Or use package like gridfs
@@ -20,7 +20,7 @@ export class ImageManagerClientController {
       }
       const username = req.headers['x-username'];
       if (!username) {
-        throw { message: 'please use username' };
+        throw { message: 'Please use username' };
       }
       const fileId = uuidv4();
       const queryObj = {
@@ -37,14 +37,8 @@ export class ImageManagerClientController {
     }
   }
 
-  @Get('/view/')
-  viewErr() {
-    return { error: 'please send file id param' };
-  }
-
-  // TODO: return encoded result
-  @Get('view/:fileId')
-  async viewImage(@Param('fileId') fileId, @Req() req, @Res() res): Promise<any> {
+  @Get('view')
+  async viewImage(@Query('fileId') fileId, @Req() req, @Res() res): Promise<any> {
     try {
       this.logger.log({ message: `Client-controller: view image name: ${fileId}` });
       const username = req.headers['x-username'];
@@ -59,10 +53,12 @@ export class ImageManagerClientController {
       const result: Observable<any> = await this.client.send('view-image', queryObj);
       result.subscribe((obj => {
         if (obj.error) {
-          // res.status(404).send({ error: obj.error });
           res.status(404).send({ message: 'Image not found', error: obj.error }).end();
         } else {
-          res.send(obj);
+          const encodeImage = obj.data.image;
+          const imageBuffer = Buffer.from(encodeImage);
+          res.contentType(obj.mimetype);
+          res.send(imageBuffer);
           res.end();
         }
       }));

@@ -26,6 +26,12 @@ An REST api microservice implementation using Nest JS and RabbitMQ
   ### using docker-compose 
   - docker-compose up
   -  use api image-manager-docker.postman_collection.json
+  ### run nest services locally
+    - docker run  -d  --name rabbit-local -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+    -  docker run --name mongo-local --restart unless-stopped -d -p 27017:27017 -v ~/data:/data/db mongo
+    - Run the two microservices- client and app; $ npm run start:dev
+    
+
 
 
 ## TODOs

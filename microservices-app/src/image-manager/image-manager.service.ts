@@ -20,13 +20,15 @@ export class ImageManagerService {
     const file = queryObj.file;
     try {
       this.logger.log({ message: `App-Service: uploading image id ${queryObj.fileId}` });
-      const encodeImage = file.buffer.data.toString('base64');
+      const encodeImage = file.buffer.data;
+
       const finalImg = {
         contentType: file.mimetype,
         image: Buffer.from(encodeImage, 'base64'),
       };
       const imageDoc = {
-        title: file.mimetype,
+        originalName: file.originalname,
+        mimetype: file.mimetype,
         uploader: queryObj.username,
         encoding: file.encoding,
         size: file.size,
@@ -36,7 +38,7 @@ export class ImageManagerService {
       const newImage = new this.imageModel(imageDoc);
       const result = await newImage.save();
       if (result) {
-        this.usageReportService.editCollections(queryObj.username, queryObj.fileId, queryObj.queryType)
+        this.usageReportService.editCollections(queryObj.username, queryObj.fileId, queryObj.queryType);
       }
       return;
     } catch (err) {
@@ -45,15 +47,14 @@ export class ImageManagerService {
     }
   }
 
-  // TODO: edit to view result of binary
   async viewImage(queryObj: QueryObjDto): Promise<any> {
     try {
       this.logger.log({ message: `App-Service: view image id ${queryObj.fileId}` });
-      const result: any = await this.imageModel.findOne({ fileId: queryObj.fileId });
-      if (result) {
-        this.usageReportService.editCollections(queryObj.username, queryObj.fileId, queryObj.queryType)
+      const ImageDoc: any = await this.imageModel.findOne({ fileId: queryObj.fileId });
+      if (ImageDoc) {
+        this.usageReportService.editCollections(queryObj.username, queryObj.fileId, queryObj.queryType);
       }
-      return result.data;
+      return ImageDoc;
     } catch (err) {
       this.logger.warn({ error: `App-Service: couldn't view image id ${queryObj.fileId}` });
       return { error: err.message };
